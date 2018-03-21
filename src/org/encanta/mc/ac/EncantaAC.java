@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -18,16 +19,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.bukkit.craftbukkit.v1_12_R1.command.ColouredConsoleSender;
 
 import net.md_5.bungee.api.ChatColor;
 
 public class EncantaAC extends JavaPlugin implements CommandExecutor {
 	private static EncantaAC instance;
 	private AimDataManager dataManager;
-	final String messagePrefix = ChatColor.GOLD + "(*) "; // ►►
+	final String messagePrefix = ChatColor.translateAlternateColorCodes('&', "&9&l「&r&bUnrealPower&r&9&l」"); // â–ºâ–º
 	private CombatAnalyser analyser;
 	private long trainTimeLength = 6; // in seconds
-	private long trainPhases = 7;
+	private long trainPhases = 6;
 	private double outlierThreshold = 0.3;
 
 	public void onEnable() {
@@ -41,17 +43,17 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 			this.getLogger().severe("Could not build neuron network, please check the stacktrace");
 			e.printStackTrace();
 		}
-		this.getCommand("eac").setExecutor(this);
+		this.getCommand("upw").setExecutor(this);
 		this.getServer().getPluginManager().registerEvents(new PlayerDataLogger(this), this);
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("eac")) {
+		if (cmd.getName().equalsIgnoreCase("upw")) {
 			if (args.length == 0) {
-				sender.sendMessage(ChatColor.GOLD + "EncantaAC: " + ChatColor.YELLOW + "Wolfchild v1");
+				sender.sendMessage(messagePrefix + ChatColor.translateAlternateColorCodes('&', "&fV: &910.2-1U&r &fNN: &91&r &fBV: &91 &fID: &9Unavailable"));
 				sender.sendMessage(
-						ChatColor.GOLD + "Server version: " + ChatColor.GREEN + this.getServer().getVersion());
+						ChatColor.WHITE + "Server version: " + ChatColor.DARK_AQUA + this.getServer().getVersion());
 				return true;
 			}
 			if (args.length == 1)
@@ -96,7 +98,7 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 						e.printStackTrace();
 					}
 					return true;
-				case "test":
+				case "analyse":
 					Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
 						@Override
 						public void run() {
@@ -127,7 +129,7 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 
 			if (args.length == 3) {
 				switch (args[0]) {
-				case "test":
+				case "analyse":
 					String playername = args[1];
 					int timelength = Integer.valueOf(args[2]);
 					sender.sendMessage(messagePrefix + ChatColor.YELLOW + "Attempt to classify " + playername + " for "
@@ -210,7 +212,7 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 			public void run() {
 				AimDataSeries data = getDataManager().getDataSeries(p.getName());
 				dataManager.removePlayer(p.getName());
-				analyser.sendAnalyse(callback, data.getAllDump());
+				analyser.sendAnalyse(callback, data.getAllDump(), p);
 			}
 		}, 20 * timelength);
 
