@@ -1,9 +1,11 @@
 main: org.encanta.mc.ac.EncantaAC
-name: EncantaAC
-version: 1.0.0
-author: Unity41
+#name: EncantaAC
+name: UnrealPower
+version: 10.2-U1
+#author: Unity41
+author: OpenSource
 commands:
-    eac:
-        description: EncantaAC's command.
+    upw:
+        description: UnrealPower main command.
         permission: encanta.ac
         usage: wrong usage.
