@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -70,14 +71,14 @@ public class Utils {
 		return stored_samples;
 	}
 
-	public static void sendInfoToPlayer(Player p)
+	public static void sendInfoToPlayer(ConsoleCommandSender sender)
 			throws FileNotFoundException, IOException, InvalidConfigurationException {
-		p.sendMessage(ChatColor.AQUA + "  Stored " + Utils.getStoredCategoryNum() + " category(s)");
+		sender.sendMessage(ChatColor.AQUA + "  Stored " + Utils.getStoredCategoryNum() + " category(s)");
 		File cat_folder = getFile("categories");
 		for (File file : cat_folder.listFiles()) {
 			FileConfiguration sample = new YamlConfiguration();
 			sample.load(file);
-			p.sendMessage("   Category " + ChatColor.YELLOW + sample.getString("category") + ChatColor.RESET
+			sender.sendMessage("   Category " + ChatColor.YELLOW + sample.getString("category") + ChatColor.RESET
 					+ " sample_size: " + ChatColor.YELLOW + sample.getList("samples").size() + ChatColor.RESET
 					+ " timestamp: " + ChatColor.YELLOW + sample.getString("timestamp"));
 		}
