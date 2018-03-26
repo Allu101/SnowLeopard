@@ -1,7 +1,7 @@
 main: org.encanta.mc.ac.EncantaAC
 #name: EncantaAC
 name: UnrealPower
-version: 10.2-U1
+version: 0.10-1E
 #author: Unity41
 author: OpenSource
 commands:
