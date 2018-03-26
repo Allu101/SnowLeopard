@@ -43,13 +43,13 @@ public class CombatAnalyser {
 				ChatColor.GREEN + "Rebuilded neuron network with epoch(es) " + lvq.trainUntil(0.00000000001));
 	}
 
-	public void sendAnalyse(ConsoleCommandSender callback, Double[] dump, Player p) {
+	public void sendAnalyse(ConsoleCommandSender sender, Double[] dump, Player p) {
 		lvq.printPredictResult(dump);
-		getServer();
-		ConsoleCommandSender console = Bukkit.getConsoleSender();
-		console.sendMessage(ChatColor.GOLD + "** Analysis Report **");
-		console.sendMessage(ChatColor.GREEN + "  Best matched: " + ChatColor.YELLOW + lvq.predict(dump).bestMatched);
-		console.sendMessage(
+		//getServer();
+		//ConsoleCommandSender console = Bukkit.getConsoleSender();
+		sender.sendMessage(ChatColor.GOLD + "** Analysis Report **");
+		sender.sendMessage(ChatColor.GREEN + "  Best matched: " + ChatColor.YELLOW + lvq.predict(dump).bestMatched);
+		sender.sendMessage(
 				ChatColor.GREEN + "  Euclidean distance: " + ChatColor.YELLOW + lvq.predict(dump).distance);
 		if(lvq.predict(dump).bestMatched.equals("combat.Impossible")){
 			//p.kickPlayer(ChatColor.translateAlternateColorCodes('&', "&c&lUnrealPower&r &8-&r &7Machine Learning (combat.Impossible)"));
@@ -57,14 +57,14 @@ public class CombatAnalyser {
 		}
 	}
 
-	public void sendInfoToPlayer(Player p) {
-		p.sendMessage(ChatColor.AQUA + "  Neuron network: ");
-		p.sendMessage("   Input layer: " + ChatColor.YELLOW + lvq.getInputLayerSize());
-		p.sendMessage("   Output layer: " + ChatColor.YELLOW + lvq.getOutputLayerSize());
+	public void sendInfoToPlayer(ConsoleCommandSender sender) {
+		sender.sendMessage(ChatColor.AQUA + "  Neuron network: ");
+		sender.sendMessage("   Input layer: " + ChatColor.YELLOW + lvq.getInputLayerSize());
+		sender.sendMessage("   Output layer: " + ChatColor.YELLOW + lvq.getOutputLayerSize());
 		lvq.print_outputlayers();
 
 		try {
-			Utils.sendInfoToPlayer(p);
+			Utils.sendInfoToPlayer(sender);
 		} catch (IOException | InvalidConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
