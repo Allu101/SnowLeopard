@@ -23,13 +23,14 @@ import org.bukkit.craftbukkit.v1_12_R1.command.ColouredConsoleSender;
 
 import net.md_5.bungee.api.ChatColor;
 
+@SuppressWarnings("unused")
 public class EncantaAC extends JavaPlugin implements CommandExecutor {
 	private static EncantaAC instance;
 	private AimDataManager dataManager;
 	final String messagePrefix = ChatColor.translateAlternateColorCodes('&', "&9&l「&r&bUnrealPower&r&9&l」"); // â–ºâ–º
 	private CombatAnalyser analyser;
 	private long trainTimeLength = 6; // in seconds
-	private long trainPhases = 6;
+	private long trainPhases = 35;
 	private double outlierThreshold = 0.3;
 
 	public void onEnable() {
@@ -88,7 +89,7 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 					p.getWorld().spawnEntity(toSpawn, EntityType.ZOMBIE);
 					return true;
 				case "info":
-					analyser.sendInfoToPlayer((Player) sender);
+					analyser.sendInfoToPlayer((ConsoleCommandSender) sender);
 					return true;
 				case "rebuild":
 					sender.sendMessage(messagePrefix + ChatColor.GREEN + "Attempt to rebuild neuron network...");
@@ -134,7 +135,7 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 					int timelength = Integer.valueOf(args[2]);
 					sender.sendMessage(messagePrefix + ChatColor.YELLOW + "Attempt to classify " + playername + " for "
 							+ timelength + " seconds");
-					this.test((Player) sender, Bukkit.getPlayer(playername), timelength);
+					this.test((ConsoleCommandSender) sender, Bukkit.getPlayer(playername), timelength);
 					return true;
 				}
 			}
@@ -205,14 +206,14 @@ public class EncantaAC extends JavaPlugin implements CommandExecutor {
 		}, 0, 20 * trainTimeLength);
 	}
 
-	private void test(Player callback, Player p, int timelength) {
+	private void test(ConsoleCommandSender sender, Player p, int timelength) {
 		dataManager.addPlayer(p.getName());
 		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 			@Override
 			public void run() {
 				AimDataSeries data = getDataManager().getDataSeries(p.getName());
 				dataManager.removePlayer(p.getName());
-				analyser.sendAnalyse(callback, data.getAllDump(), p);
+				analyser.sendAnalyse(sender, data.getAllDump(), p);
 			}
 		}, 20 * timelength);
 
