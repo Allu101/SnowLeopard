@@ -1,6 +1,5 @@
 package com.nova41.bukkitdev.slr.listener;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,26 +22,18 @@ public class PlayerAttackAngleLogger implements Listener {
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent event) {
-        // Ignore if the event is not triggered by a player
-        if (!(event.getDamager() instanceof Player))
-            return;
-
-        // Ignore if angle sequence from the player does not need to be logged
-        if (!registeredPlayers.contains(event.getDamager().getName()))
+        // Ignore if angle sequence from the player does not need to be logged or if the event is not triggered by a player
+        if (!registeredPlayers.contains(event.getDamager().getName()) || !(event.getDamager() instanceof Player))
             return;
 
         // Calculate angle. See 2.2 in https://www.spigotmc.org/threads/machine-learning-killaura-detection-in-minecraft.301609/
         Player player = (Player) event.getDamager();
-        Entity entity = event.getEntity();
-        Vector playerLookDir = player.getEyeLocation().getDirection();
-        Vector playerEyeLoc = player.getEyeLocation().toVector();
-        Vector entityLoc = entity.getLocation().toVector();
-        Vector playerEntityVec = entityLoc.subtract(playerEyeLoc);
-        float angle = playerLookDir.angle(playerEntityVec);
+        Vector playerEntityVec = event.getEntity().getLocation().toVector().subtract(player.getEyeLocation().toVector());
+
+        float angle = player.getEyeLocation().getDirection().angle(playerEntityVec);
 
         // Log the angle
-        if (!loggedAngles.containsKey(player.getName()))
-            loggedAngles.put(player.getName(), new ArrayList<>());
+        loggedAngles.putIfAbsent(player.getName(), new ArrayList<>());
         loggedAngles.get(player.getName()).add(angle);
     }
 
@@ -68,6 +59,11 @@ public class PlayerAttackAngleLogger implements Listener {
 
     // Clear logged angle sequence (if there's any) for a player
     public void clearLoggedAngles(Player player) {
+        loggedAngles.remove(player.getName());
+    }
+
+    public void clearLoggedAnglesAndUnregister(Player player) {
+        registeredPlayers.remove(player.getName());
         loggedAngles.remove(player.getName());
     }
 }

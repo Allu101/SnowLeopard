@@ -398,12 +398,10 @@ public class SnowLeopardReboot extends JavaPlugin {
         angleLogger.registerPlayer(player);
         getServer().getScheduler().runTaskLater(this, () -> {
             List<Float> angleSequence = angleLogger.getLoggedAngles(player);
-            angleLogger.unregisterPlayer(player);
-            angleLogger.clearLoggedAngles(player);
+            angleLogger.clearLoggedAnglesAndUnregister(player);
 
             // Call the consumer with classification result
-            double[] extractedFeatures = SLMaths.extractFeatures(angleSequence);
-            consumer.accept(neuralNetwork.predict(extractedFeatures));
+            consumer.accept(neuralNetwork.predict(SLMaths.extractFeatures(angleSequence)));
         }, duration * 20L);
     }
 

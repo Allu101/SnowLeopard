@@ -134,7 +134,8 @@ public class LVQNeuralNetwork {
         // normalize the input data
         double[] vectorNormalized = vector.clone();
         for (int i = 0; i <= vector.length - 1; i++)
-            vectorNormalized[i] = SLMaths.normalize(vector[i], minMaxOfRow[i][0], minMaxOfRow[i][1]);
+            // normalize a value with feature scaling according to the given min and max
+            vectorNormalized[i] = (vector[i] - minMaxOfRow[i][0]) / (minMaxOfRow[i][1] - minMaxOfRow[i][0]);
 
         return new LVQNeuralNetworkPredictResult(getDistanceToClassCenters(vectorNormalized));
     }
