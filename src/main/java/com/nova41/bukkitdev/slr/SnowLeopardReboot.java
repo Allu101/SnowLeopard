@@ -6,7 +6,6 @@ import com.nova41.bukkitdev.slr.model.LVQNeuralNetwork;
 import com.nova41.bukkitdev.slr.model.LVQNeuralNetworkPredictResult;
 import com.nova41.bukkitdev.slr.model.LVQNeuralNetworkSummary;
 import com.nova41.bukkitdev.slr.model.LabeledData;
-import com.nova41.bukkitdev.slr.util.SLFiles;
 import com.nova41.bukkitdev.slr.util.SLMaths;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -57,14 +56,9 @@ public class SnowLeopardReboot extends JavaPlugin {
 
     public void onEnable() {
         // Initialize data folder
-        try {
-            SLFiles.createDirectoryIfAbsent(getDataFolder().getPath(), DIRNAME_CATEGORY);
-            SLFiles.createDirectoryIfAbsent(getDataFolder().getPath(), DIRNAME_DUMPED_DATA);
-            SLFiles.saveResourceIfAbsent(this, "config.yml", "config.yml");
-        } catch (IOException e) {
-            getLogger().severe("Unable to save resource file");
-            e.printStackTrace();
-        }
+        this.saveDefaultConfig();
+        new File(getDataFolder(), DIRNAME_CATEGORY).mkdir();
+        new File(getDataFolder(), DIRNAME_DUMPED_DATA).mkdir();
 
         // Rebuild the built-in neural network with parameters specified in config.yml
         rebuildNetworkWithDataset();
